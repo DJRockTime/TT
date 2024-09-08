@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+        手写call方法
+        定义 myCall 方法
+        设置this并调用原函数
+        接收剩余参数并返回结果
+        使用symbol调优
+     -->
+
+    <script>
+      Function.prototype.myBind = function (thisArg, ...args) {
+        return (...restArgs) => {
+          return this.call(this.thisArg, ...args, ...restArgs);
+        };
+      };
+
+      /*
+         TESTING
+       */
+
+      const person = {
+        name: "rock",
+      };
+
+      function func2(numA, numB, numC, numD) {
+        console.log(this);
+        console.log(numA, numB, numC, numD);
+        return numA + numB + numC + numD;
+      }
+
+      const bindFunc = func2.myBind(person, 1, 2);
+
+      const res = bindFunc(3, 4);
+      console.log("返回值", res);
+    </script>
+  </body>
+</html>

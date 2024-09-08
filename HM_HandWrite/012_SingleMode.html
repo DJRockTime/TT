@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <!-- 单例模式 -->
+  <!-- 
+
+    1. 单例方法
+        1. 自己实现
+        2. want 中 toast 和 notify 组件
+
+    2. 单例的思想
+        1. vue2 的use方法   use 注册插件
+        2. vue3 的use方法
+
+ -->
+
+  <body></body>
+  <script>
+    class Singleton {
+      static #instance = "singleton";
+      #home = "home";
+
+      constructor() {}
+
+      static getInstance() {
+        if (this.#instance === undefined) {
+          this.#instance = new Singleton();
+        }
+        return this.#instance;
+      }
+    }
+
+    const s1 = Singleton.getInstance();
+    const s2 = Singleton.getInstance();
+    console.log(s1 === s2); // true;
+  </script>
+</html>

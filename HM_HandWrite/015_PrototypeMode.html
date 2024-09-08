@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <!-- 
+    原型模式
+        原型模式是创建型模式的一种，其特点是在于通过复制，一个已经存在的实例来返回新的实例，而不是新建实例
+
+        1. Object.create() : 将对象作为原型，创建新的对象
+
+        2. Vue2 中的数组方法
+    -->
+  <body></body>
+
+  <script>
+    /*
+     Object.create()
+    */
+
+    const food = {
+      name: "西兰花炒鸡蛋",
+      eat() {
+        console.log("好吃");
+      },
+    };
+
+    const newFood = Object.create(food);
+    console.log(newFood === food);
+
+    /*
+        Vue2 数组处理
+    */
+
+    const arrayProto = Array.prototype;
+    const vueArr = Object.create(arrayProto);
+
+    const arrayMethodsList = [
+      "push",
+      "pop",
+      "shift",
+      "unshift",
+      "splice",
+      "sort",
+    ];
+
+    arrayMethodsList.forEach((method) => {
+      const origin = vueArr[method];
+    });
+  </script>
+</html>

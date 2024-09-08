@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <!-- 
+    ES5 寄生组合式继承
+
+   -->
+  <body></body>
+  <script>
+    function Person(name) {
+      this.name = name;
+    }
+
+    Person.prototype.sayHi = function () {
+      console.log(`hello, ${this.name}`);
+    };
+
+    /* 
+        寄生组合式继承核心代码
+    */
+    function Student(name) {
+      Person.call(this, name);
+    }
+
+    const prototype = Object.create(Person.prototype, {
+      constructor: {
+        value: Student,
+      },
+    });
+    Student.prototype = prototype;
+
+    /* 
+        TEST
+    */
+    const s = new Student("rock");
+    s.sayHi("test");
+  </script>
+</html>

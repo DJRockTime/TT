@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <!-- 
+    1 ES6 基于Class实现继承
+        1. class 核心语法
+        2. class 实现继承
+        3. 静态属性和私有属性
+        
+    2. ES5： 基于原型和构造函数实现继承
+        1. 原型链继承
+        2. 借用构造函数继承
+        3. 组合继承
+        4. 原型式继承
+        5. 寄生式继承
+        6. 寄生组合式继承
+
+   -->
+  <body>
+    <script>
+      class Person {
+        // 静态属性
+        static name = "John";
+        // 1. 公有属性 实例属性
+        name;
+        // 私有属性
+        age = 18;
+        constructor(name) {
+          this.name = name;
+        }
+
+        // 实例方法
+        sayHi() {
+          console.log(`Hello ${this.name}`);
+        }
+
+        // 静态方法
+        static sayHello() {
+          console.log(`hello world ${this.name}`);
+        }
+      }
+
+      let p = new Person("rock");
+      console.log(p);
+      console.log(p.name);
+      console.log(Person.name);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <!-- 
+    Subject 目标对象
+    Observer 观察者对象
+    observerList 观察者列表
+    notify 通知
+    update 观察者定义的动作函数
+   -->
+  <body>
+    <h3>Subject 目标对象</h3>
+    <h3>Observer 观察者对象</h3>
+    <h3>observerList 观察者列表</h3>
+    <h3>notify 通知</h3>
+    <h3>update 观察者定义的动作函数</h3>
+  </body>
+
+  <script>
+    // 创建
+    class Candidate {
+      constructor(name) {
+        this.name = name;
+      }
+
+      // 更新通知
+      update({ companyName, info }) {
+        console.log(this.name + "收到" + companyName + "的面试邀请" + info);
+      }
+    }
+
+    // 创建目标对象类
+    class Subject {
+      constructor(name) {
+        this.name = name;
+        // 观察者列表
+        this.observerList = [];
+      }
+
+      // 添加观察者 -- 职位候选人
+      addObserver(observer) {
+        this.observerList.push(observer);
+      }
+
+      // 通知  参数接收一个消息
+      notify(msg) {
+        this.observerList.forEach((observer) => {
+          observer.update(msg);
+        });
+      }
+    }
+
+    // 创建目标对象
+    let subject = new Subject("IBM");
+
+    let p1 = new Candidate("rock");
+    let p2 = new Candidate("Allan");
+    let p3 = new Candidate("Cyan");
+
+    subject.addObserver(p1);
+    subject.addObserver(p2);
+    subject.addObserver(p3);
+
+    subject.notify({
+      companyName: subject.name,
+      info: "We are sent a offer to your email, please attend the interview at 2:00PM ",
+    });
+  </script>
+</html>

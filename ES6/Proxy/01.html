@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 
+      
+        1. target: 目标对象
+        2. handler 具体操作
+        3. Reflect  Proxy 所有的操作方法，都和Reflect一一对应
+      */
+
+      let o;
+      Object.defineProperty(o, "b", {
+        get() {
+          return bValue;
+        },
+        set(newValue) {
+          bValue = newValue;
+        },
+        enumerable: true,
+        configurable: true,
+      });
+
+      let obj = {
+        a: 1,
+      };
+
+      let p = new Proxy(obj, {
+        //  1. target: 源对象
+        set(target, p, value, receiver) {
+          console.log("set", target, p, value, receiver);
+        },
+
+        get(target, p, receiver) {
+          console.log("get", target, p, receiver);
+          return Reflect.get(obj, a);
+        },
+
+        has(target, p) {
+          console.log(target, p);
+        },
+
+        ownKeys(target) {
+          return Reflect.ownKeys(target);
+        },
+
+        deleteProperty(target, p) {
+          console.log("🍃 ~ deleteProperty ~ :", target, p);
+          Reflect.deleteProperty(p, "a");
+        },
+
+        getOwnPropertyDescriptor(target, prop) {
+          return Reflect.getOwnPropertyDescriptor(p, "a");
+        },
+      });
+
+      p.a = 10;
+
+      if ("a" in p) {
+        console.log("pp");
+      }
+
+      delete p["a"];
+
+      let a = {
+        name: "rock",
+        age: 18,
+      };
+
+      if ("age" in a) console.log("aa");
+
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <!-- 
+    1 ES6 基于Class实现继承
+        1. class 核心语法
+        2. class 实现继承
+        3. 静态属性和私有属性
+        
+    2. ES5： 基于原型和构造函数实现继承
+        1. 原型链继承
+        2. 借用构造函数继承
+        3. 组合继承
+        4. 原型式继承
+        5. 寄生式继承
+        6. 寄生组合式继承
+
+
+    3 . 属性
+
+      # 私有属性
+      static 静态属性
+
+   -->
+  <body>
+    <script>
+      class Person {
+        name;
+        #age;
+        constructor(name) {
+          this.name = name;
+        }
+
+        sayHi() {
+          console.log(`hello ${this.name}`);
+        }
+
+        #main() {
+          console.log(`main`);
+        }
+      }
+
+      /*
+        子类
+        extends： 继承父类
+        super:  一般用来继承父类的构造函数
+      */
+
+      class Student extends Person {
+        age;
+        #privateInfo = "private";
+        constructor(name, age) {
+          super(name);
+          this.age = age;
+        }
+
+        sayHello() {
+          console.log(`hello ${this.name}`);
+        }
+
+        // 覆盖父类
+        sayHi() {
+          console.log(`hi ${this.name}`);
+          this.#test();
+        }
+
+        // 私有属性
+        #test() {
+          console.log(`test`);
+        }
+      }
+
+      const s = new Student("rock");
+      console.log(s);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+        Currying  柯里化
+        接收多个参数变成接收单一参数的一个函数
+        并且返回接收余下的参数而返回结果的新函数的技术
+        function sum(a, b) {
+            return a + b;
+        }
+
+        sum (1, 2);
+        sum(1)(2);
+
+    -->
+    <h1>hello world</h1>
+  </body>
+
+  <script>
+    // function sum(a) {
+    //   return function (b) {
+    //     return a + b;
+    //   };
+    // }
+
+    // a(1)(2);
+
+    // function add(a) {
+    //   return function (b) {
+    //     return function (c) {
+    //       return a + b + c;
+    //     };
+    //   };
+    // }
+
+    // add(1)(2)(3);
+
+    // =================================通用参数包装================================
+
+    function sumMaker(length) {
+      let num = [];
+      function sum(...args) {
+        num.push(...args);
+        if (num.length >= length) {
+          const res = num.slice(0, length).reduce((p, v) => p + v, 0);
+          num = [];
+          return res;
+        } else {
+          return sum;
+        }
+      }
+
+      return sum;
+    }
+
+    // =================================柯里化应用================================
+    /* 
+        参数复用： 为函数预制通用参数，供多次重复调用
+    */
+
+    /* 
+    tools
+     */
+
+    function isUndefined(v) {
+      return typeof v === "undefined";
+    }
+
+    function isNumber(v) {
+      return typeof v === "number";
+    }
+
+    function isString(v) {
+      return typeof v === "string";
+    }
+
+    function isFunction(v) {
+      return typeof v === "function";
+    }
+
+    const typeOfTest = function (type) {
+      function isUndefined(v) {
+        return typeof v === type;
+      }
+
+      return isUndefined;
+    };
+
+    const typeGun = function (type) {
+      return (v) => typeof v === type;
+    };
+
+    const typeGun2 = (type) => (v) => typeof v === type;
+  </script>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <!-- 
+    Generator 核心语法
+        1. 定义生成器函数
+        2. 获取 Generator 对象
+        3. next方法
+        4. for of
+
+        function* funcGenerator() {
+            yield axios("url1");
+            yield axios("url2");
+            yield axios("url3");
+        }
+   -->
+  <body></body>
+  <script>
+    // 创建生成器
+    function* rockGenerator() {
+      console.log(" run...");
+      yield "1";
+      yield "2";
+      yield "3";
+    }
+
+    // 获取生成器对象
+    const gen = rockGenerator();
+
+    // 3. next 方法
+    // gen.next();
+
+    // {value: 'yield', done: false/true}
+    for (const iterator of gen) {
+      console.log(iterator);
+    }
+
+    /* 
+        实例应用2
+        
+    */
+
+    function* cityGenerator() {
+      yield axios("http://hmajax.itheima.net/api/city/pname=北京");
+      yield axios("http://hmajax.itheima.net/api/city/pname=广东省");
+    }
+
+    const city = cityGenerator();
+
+    city
+      .next()
+      .value.then((res) => {
+        console.log("res", res);
+        city.next().value;
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  </script>
+</html>

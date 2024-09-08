@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.js"></script>
+  </head>
+  <!-- 代理模式 -->
+  <!-- 代理模式是一个为对象提供一个代用品或占位符，以便控制对他的访问 -->
+  <body>
+    <h2>代理模式</h2>
+    <input type="text" class="query" placeholder="please input city" />
+  </body>
+
+  <script>
+    /* 
+        缓存代理
+    */
+
+    const cache = {};
+    async function searchCity(pname) {
+      // 代理模式
+      if (!cache[pname]) {
+        const res = await axios({
+          url: "http://hmajax.itheima.net/api/city",
+          params: {
+            pname,
+          },
+        });
+        cache[pname] = res.data.list;
+      }
+      return cache[pname];
+    }
+
+    document
+      .querySelector(".query")
+      .addEventListener("keyup", async function (e) {
+        if (e.keyCode === 13) {
+          const city = await searchCity(this.value);
+          console.log(city);
+        }
+      });
+  </script>
+</html>

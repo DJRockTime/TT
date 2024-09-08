@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./promise.js"></script>
+  </head>
+
+  <!-- 
+    异步任务API
+
+    vue2 :  Promise.then    MutationObserver    setImmediate   setTimeout
+    
+    2. 选用  queueMicrotask  MutationObserver  setTimeout
+
+    queueMicrotask(() => {
+      code ................
+    })
+
+
+    const obs = new MutationObserver(()=> {
+
+    })
+
+    const divNode = document.createElement('div');
+    obs.observe(divNode, {childList: true});
+    divNode.innerHTML = ' rocked';
+
+
+    setTimeout(()=>{}, 100);
+
+    
+   -->
+
+  <body>
+    <h1>Hello world</h1>
+  </body>
+  <script>
+    const p1 = HWPromise.resolve(1);
+    const p2 = 2;
+    const p3 = new HWPromise((resolve, reject) => {
+      // reject(3);
+      // setTimeout(() => {
+      //   reject(3);
+      // }, 1000);
+    });
+
+    // HWPromise.allSettled([p1, p2, p3]).then(
+    //   (res) => {
+    //     console.log("rock");
+    //     console.log(
+    //       "🚀 ~ file: index.html:49 ~ HWPromise.allSettled ~ res:",
+    //       res,
+    //     );
+    //   },
+    //   (err) => {
+    //     console.log(
+    //       "🚀 ~ file: index.html:54 ~ HWPromise.allSettled ~ err:",
+    //       err,
+    //     );
+    //   },
+    // );
+    HWPromise.allSettled([]).then(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
+  </script>
+</html>

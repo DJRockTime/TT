@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <!-- 
+    如何请求
+
+   -->
+  <body>
+    <input type="file" class="image" />
+    <button class="btn1">Click</button>
+    <button class="btn2">Click</button>
+  </body>
+
+  <script>
+    let btn1 = document.querySelector(".btn1");
+    let btn2 = document.querySelector(".btn1");
+    let image = document.querySelector(".image");
+    btn1.addEventListener("click", () => {
+      func();
+    });
+    btn2.addEventListener("click", () => {
+      func2();
+    });
+
+    /*
+        请求
+    */
+
+    async function func() {
+      const res = await fetch("http://localhost:3000/_routes");
+      console.log(res);
+
+      if (res.status >= 200 && res.status < 300) {
+        const data = await res.json();
+        console.log(data);
+      } else {
+        console.log(res.status);
+      }
+    }
+
+    /*
+        fetch 提交form data
+        提交数据
+    */
+
+    image.addEventListener("change", async () => {
+      const img = this.files[0];
+      const data = new FormData();
+      data.append("img", img);
+
+      const res = await fetch("url", {
+        method: "get",
+        body: "formData",
+      });
+
+      let webData = await res.json();
+      console.log(webData);
+
+      // 回显
+      image.src = webData.data.url;
+    });
+
+    /*
+        fetch 提交json
+        fetch 设置请求头
+    */
+
+    const func2 = async () => {
+      const header = new Headers();
+      header.append("content-type", "application/json");
+
+      let json = JSON.stringify({
+        username: "rock",
+        password: "123456",
+        age: 18,
+      });
+
+      const res = await fetch("http://hmajax.itheima.net/api/register", {
+        method: "post",
+        header,
+        body: json,
+      });
+
+      console.log(res);
+      let resData = res.json();
+      console.log(resData);
+    };
+  </script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 迭代器模式
+     -->
+  </head>
+  <body></body>
+  <script>
+    Object.prototype.objFunc = function () {};
+    Array.prototype.arrFunc = function () {};
+
+    const foods = ["西兰花", "花菜", "西葫芦"];
+
+    /*
+      for in
+      可以遍历 一个对象除 Symbol 意外的属性
+      遍历的是索引
+    */
+
+    /*
+      for of 语句可以遍历可迭代对象 包括Array, Map, Set, String, TypeArray, arguments
+      只能遍历特定对象
+      遍历的是值
+      并且继承来的无法遍历
+    */
+
+    /*
+     迭代协议  实现Iterator方法
+     Symbols.Iterator  可迭代协议
+
+
+     迭代器协议
+     实现了一个有 next() 方法的对象
+     有done、value属性
+     next() {
+        return {
+            done: true,
+            value,
+        }
+     }
+
+     如果done 为true 则迭代结束
+     如果done 为 false 则迭代未结束，返回value
+    */
+
+    for (const iterator of foods) {
+      console.log("iterator", iterator);
+    }
+
+    const obj = {
+      name: "西兰花炒蛋",
+    };
+
+    for (const iterator of obj) {
+    }
+
+    for (const key in object) {
+      if (Object.hasOwnProperty.call(object, key)) {
+        const element = object[key];
+      }
+    }
+
+    /*
+         实现
+     */
+    const obj2 = {
+      [Symbol.iterator]() {
+        function* foodGenerator() {
+          yield "apple";
+          yield "pair";
+          yield "liz";
+        }
+
+        const food = foodGenerator();
+
+        return food;
+      },
+      next() {},
+    };
+
+    for (const iterator of obj2) {
+      console.log(iterator);
+    }
+
+    /* 
+        自己实现
+    */
+    const obj3 = {
+      [Symbol.iterator]() {
+        const arr = ["beijing", "tokyo", "cheese", "dan"];
+
+        let index = 0;
+
+        return {
+          next() {
+            if (index < arr.length) {
+              return {
+                done: false,
+                value: arr[index++],
+              };
+            }
+            return { done: true };
+          },
+        };
+      },
+    };
+
+    for (const iterator of obj2) {
+      console.log(iterator);
+    }
+  </script>
+</html>
