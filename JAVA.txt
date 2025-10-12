@@ -1,0 +1,40 @@
+
+
+BO (Business Object)：业务层的“明星”，不只是数据，还带逻辑（如校验、聚合）。例如，在Service中用BO处理“用户升级”规则，然后转DTO返回。 适合复杂业务，避免Service代码臃肿。
+DO (Data Object)：PO的“轻量版”，强调数据而非持久化。有些项目PO=DO，但DO更纯净（无JPA注解）。 在MyBatis中常见。
+POJO (Plain Old Java Object)：最宽泛，指不依赖Spring/JPA的简单类。Lombok的@Data就是典型POJO。 它不是“层”，而是“风格”——所有DTO/VO等都可POJO化。
+Entity：PO的ORM实现，专指数据库实体。Spring Data JPA里一堆Entity。 与PO基本同义，但更具体。
+QO (Query Object)：查询专用DTO变体，用于构建动态SQL（如PageHelper）。 前端传参时用。
+
+概念,全称,作用,示例场景,与API Response的关系
+PO,"Persistent Object
+(持久化对象)",映射数据库表，直接对应ORM实体（如JPA的@Entity）。,"用户在MySQL中的记录：id, name, password_hash。",不直接返回，需转DTO。
+VO,"Value Object
+(值对象/视图对象)",视图层专用，针对前端优化，字段精简。,"前端展示：id, name, avatarUrl（隐藏密码）。",常用于返回给前端的response。
+DTO,"Data Transfer Object
+(数据传输对象)",层间传输专用，扁平结构。,"Controller返回JSON：{ ""id"": 1, ""name"": ""Alice"" }。",核心！ API response首选。
+DAO,"Data Access Object
+(数据访问对象)",数据访问层接口/实现，负责CRUD。,UserDao.findById(id) 返回PO。,不返回response，只操作数据。
+BO,"Business Object
+(业务对象)",封装业务逻辑，Service层用，包含规则/计算。,订单BO：计算总价、校验库存。,内部用，不直接返回；有时转DTO。
+DO,"Data Object
+(数据对象)",类似PO，但更泛化，常指纯数据载体（无注解）。,数据库记录的纯JavaBean。,与PO互换，常不直接返回。
+POJO,"Plain Old Java Object
+(普通Java对象)",简单无框架依赖的Java类，泛指以上多数。,任何不带注解的Bean。,基础类型，所有对象都可视为POJO。
+Entity,"Entity
+(实体)",JPA/Hibernate的PO子集，带@Id/@Table注解。,@Entity public class User { ... }。,类似PO，不直接返回。
+QO,"Query Object
+(查询对象)",封装查询条件，传给DAO/Service。,"搜索用户：UserQO { nameLike: ""Ali"", ageGt: 18 }。",输入参数，非response。
+
+
+
+Java概念,TS前端对应,作用,示例（TS代码）
+PO (Persistent Object),Entity/Model (实体模型),模拟数据库实体，定义核心数据结构。,```ts
+VO (Value Object/视图对象),ViewModel (视图模型),组件专属，优化UI数据（计算字段）。,ts interface UserView { displayName: string; avatar: string; isAdmin: boolean; } // computed from Entity  Vue computed里用。
+DTO (Data Transfer Object),ApiDto (API传输对象),API响应/请求专用，扁平传输。,ts interface UserDto { id: number; name: string; // 无email敏感字段 } // fetch('/api/user').then(res => res as UserDto)
+DAO (Data Access Object),Repository/Service (仓库/服务类),封装数据操作（CRUD）。,ts class UserRepository { async getById(id: number): Promise<UserDto> { const res = await fetch(`/api/users/${id}`); return res.json(); } }
+BO (Business Object),BusinessLogic (业务逻辑类),封装规则/计算。,ts class UserBusiness { validate(user: UserDto): boolean { return user.name.length > 2; } computeScore(user: UserDto): number { return user.age * 10; } }  在Vue composable中用。
+DO (Data Object),DataCarrier (数据载体),纯数据，无逻辑。,类似DTO，但更泛（如localStorage数据）。
+POJO,Plain TS Object,简单对象，无框架。,任何{ name: string }。
+Entity,TS Entity,同PO，用class带方法。,"ts class UserEntity { constructor(public id: number, public name: string) {} }"
+QO (Query Object),QueryParams,查询参数封装。,ts interface UserQuery { name?: string; ageGt?: number; } // GET ?name=Ali&ageGt=18
