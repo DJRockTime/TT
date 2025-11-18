@@ -1,0 +1,125 @@
+#IfWinActive ahk_exe Spine.exe
+
+; =======================================
+; V2 版本核心功能增强：
+; - 支持长按（按住 R/G/S 持续生效）
+; - 所有操作不覆盖文本输入框
+; - 更真实的 Blender 操作手感
+; - 鼠标移动优化：MMB 平滑移动
+; =======================================
+
+; ===== 工具函数：避免在输入框触发热键 =====
+IsTyping() {
+    ControlGetFocus, ctrl, A
+    if (ctrl ~= "Edit|RichEdit|TextArea")
+        return true
+    return false
+}
+
+; ===== Blender R → Spine C（旋转） =====
+R::
+if (IsTyping())
+    Send, r
+else
+    Send, {c}
+return
+
+; 长按版本
+R up::
+return
+
+; ===== Blender G → Spine V（移动） =====
+G::
+if (IsTyping())
+    Send, g
+else
+    Send, {v}
+return
+
+G up::
+return
+
+; ===== Blender S → Spine X（缩放） =====
+S::
+if (IsTyping())
+    Send, s
+else
+    Send, {x}
+return
+
+S up::
+return
+
+
+; =======================================
+;  鼠标控制（v2 强化版）
+; =======================================
+
+; ----- MMB 平移画布（模拟右键，但更平滑） -----
+MButton::
+Send, {RButton down}
+return
+
+MButton Up::
+Send, {RButton up}
+return
+
+
+; ----- Shift + MMB = 加速平移（更 Blender） -----
++MButton::
+Send, {RButton down}
+return
+
++MButton Up::
+Send, {RButton up}
+return
+
+
+; ----- Ctrl + MMB = 放大视图 -----
+^MButton::
+Loop 5
+    Send, {WheelUp}
+return
+
+; ----- Alt + MMB = 缩小视图 -----
+!MButton::
+Loop 5
+    Send, {WheelDown}
+return
+
+
+; =======================================
+;   Blender-style 视图控制（新增）
+; =======================================
+
+; F 聚焦当前选中骨骼（Spine = Frame）
+f::
+Send ^f
+return
+
+
+; =======================================
+; 其他 Blender 常用增强热键（可选）
+; =======================================
+
+; Shift + D → Duplicate（在 Spine 是复制键）
++ d::
+Send, ^d
+return
+
+; Alt + R → 清除旋转（Spine = reset rotation）
+!r::
+Send, ^c
+return
+
+; Alt + G → 清除位置
+!g::
+Send, ^v
+return
+
+; Alt + S → 清除缩放
+!s::
+Send, ^x
+return
+
+#IfWinActive
