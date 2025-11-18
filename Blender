@@ -1,125 +1,184 @@
-#IfWinActive ahk_exe Spine.exe
+#Requires AutoHotkey v2.0
+; ===================================================================
+; Blender 操作流 — AutoHotkey v2 兼容脚本（v2 完整版）
+; - 按当前活动窗口自动切换映射（#HotIf WinActive(...)）
+; - 输入框检测，避免在输入时触发映射
+; - R/G/S 映射（到 Spine 的 C/V/X）
+; - MMB 平移（模拟右键按住），支持 Shift/Ctrl/Alt 扩展
+; - 可同时支持多个软件（示例：Spine, Photoshop, Maya）
+; ===================================================================
 
-; =======================================
-; V2 版本核心功能增强：
-; - 支持长按（按住 R/G/S 持续生效）
-; - 所有操作不覆盖文本输入框
-; - 更真实的 Blender 操作手感
-; - 鼠标移动优化：MMB 平滑移动
-; =======================================
-
-; ===== 工具函数：避免在输入框触发热键 =====
+; -------- 辅助函数 --------
 IsTyping() {
-    ControlGetFocus, ctrl, A
-    if (ctrl ~= "Edit|RichEdit|TextArea")
+    ; 返回 true 如果当前焦点在编辑控件里（防止在输入文本时触发）
+    ctrl := ControlGetFocus("A")        ; 在 v2 中 ControlGetFocus 返回控件名
+    if !ctrl
+        return false
+    ; 常见编辑控件名包含 "Edit", "RichEdit", "RichEdit20", "Edit1" 等
+    if RegExMatch(ctrl, "i)Edit|RichEdit|RichEdit20|RichEdit20W|RichEditW|Text") 
         return true
     return false
 }
 
-; ===== Blender R → Spine C（旋转） =====
-R::
-if (IsTyping())
-    Send, r
-else
-    Send, {c}
-return
+; ================= Spine 区块 =================
+#HotIf WinActive("ahk_exe Spine.exe")
 
-; 长按版本
-R up::
-return
+R:: {
+    if IsTyping()
+        Send("r")        ; 在编辑框内就发送原始 r
+    else
+        Send("{c}")      ; Blender R -> Spine C (Rotate)
+    return
+}
 
-; ===== Blender G → Spine V（移动） =====
-G::
-if (IsTyping())
-    Send, g
-else
-    Send, {v}
-return
+G:: {
+    if IsTyping()
+        Send("g")
+    else
+        Send("{v}")      ; Blender G -> Spine V (Translate/Move)
+    return
+}
 
-G up::
-return
+S:: {
+    if IsTyping()
+        Send("s")
+    else
+        Send("{x}")      ; Blender S -> Spine X (Scale)
+    return
+}
 
-; ===== Blender S → Spine X（缩放） =====
-S::
-if (IsTyping())
-    Send, s
-else
-    Send, {x}
-return
+; 长按（v2 中 hotkey up 语法一样）
+R up:: Return
+G up:: Return
+S up:: Return
 
-S up::
-return
+; MMB 平移画布（模拟按住右键）
+MButton:: {
+    ; 如果编辑中则原样发送中键
+    if IsTyping() {
+        Send("{MButton down}")
+    } else {
+        Send("{RButton down}")
+    }
+    return
+}
 
+MButton up:: {
+    if IsTyping() {
+        Send("{MButton up}")
+    } else {
+        Send("{RButton up}")
+    }
+    return
+}
 
-; =======================================
-;  鼠标控制（v2 强化版）
-; =======================================
+; Shift+MMB = 同样平移（保持行为）
++MButton:: {
+    if IsTyping()
+        Send("{MButton down}")
+    else
+        Send("{RButton down}")
+    return
+}
++MButton up:: {
+    if IsTyping()
+        Send("{MButton up}")
+    else
+        Send("{RButton up}")
+    return
+}
 
-; ----- MMB 平移画布（模拟右键，但更平滑） -----
-MButton::
-Send, {RButton down}
-return
+; Ctrl+MMB / Alt+MMB 模拟缩放（通过滚轮）
+^MButton:: {
+    Loop 5
+        Send("{WheelUp}")
+    return
+}
+!MButton:: {
+    Loop 5
+        Send("{WheelDown}")
+    return
+}
 
-MButton Up::
-Send, {RButton up}
-return
-
-
-; ----- Shift + MMB = 加速平移（更 Blender） -----
-+MButton::
-Send, {RButton down}
-return
-
-+MButton Up::
-Send, {RButton up}
-return
-
-
-; ----- Ctrl + MMB = 放大视图 -----
-^MButton::
-Loop 5
-    Send, {WheelUp}
-return
-
-; ----- Alt + MMB = 缩小视图 -----
-!MButton::
-Loop 5
-    Send, {WheelDown}
-return
-
-
-; =======================================
-;   Blender-style 视图控制（新增）
-; =======================================
-
-; F 聚焦当前选中骨骼（Spine = Frame）
-f::
-Send ^f
-return
+#HotIf    ; 结束 Spine 块
 
 
-; =======================================
-; 其他 Blender 常用增强热键（可选）
-; =======================================
+; ================= Photoshop 区块（示例） =================
+#HotIf WinActive("ahk_exe Photoshop.exe")
 
-; Shift + D → Duplicate（在 Spine 是复制键）
-+ d::
-Send, ^d
-return
+; 在 Photoshop 中，模拟 Blender 风格：
+; - R: 旋转画布 (这里用默认的右键按住 + 拖拽为例)
+; - G: 空格手抓（按住空格）
+; - S: 参见 Photoshop 快捷键（本示例保留原 S）
 
-; Alt + R → 清除旋转（Spine = reset rotation）
-!r::
-Send, ^c
-return
+R:: {
+    if IsTyping()
+        Send("r")
+    else {
+        ; 这里演示为发送并按住右键（如果你有别的旋转插件可替换）
+        Send("{RButton down}")
+    }
+    return
+}
+R up:: {
+    if !IsTyping()
+        Send("{RButton up}")
+    return
+}
 
-; Alt + G → 清除位置
-!g::
-Send, ^v
-return
+G:: {
+    if IsTyping()
+        Send("g")
+    else
+        Send("{Space down}")   ; G -> 把空格当作抓手（按住）
+    return
+}
+G up:: {
+    if !IsTyping()
+        Send("{Space up}")
+    return
+}
 
-; Alt + S → 清除缩放
-!s::
-Send, ^x
-return
+#HotIf    ; 结束 Photoshop 块
 
-#IfWinActive
+
+; ================= Maya 区块（示例） =================
+#HotIf WinActive("ahk_exe maya.exe")
+
+; Maya 常用：Alt+LMB/MMB/RMB 进行旋转/平移/缩放，我们把中键映射为 Alt+中键 以贴合 Blender 操作
+MButton:: {
+    ; 发送 Alt down + MButton down
+    Send("{Alt down}{MButton down}")
+    return
+}
+MButton up:: {
+    Send("{MButton up}{Alt up}")
+    return
+}
+
+#HotIf    ; 结束 Maya 块
+
+
+; ================= 全局/默认 区块（可选） =================
+#HotIf ; 全局无条件的热键（谨慎使用）
+
+; 示例：Space 播放/暂停（如果当前不是文本输入）
+Space:: {
+    if !IsTyping()
+        Send("{Space}")   ; 仅示例：很多应用里 Space 有其它含义，按需启用
+    else
+        Send("{Space}")
+    return
+}
+
+#HotIf    ; 结束全局块
+
+; ===================================================================
+; 使用说明：
+; 1) 保存为 blender_flow.ahk
+; 2) 确保已安装 AutoHotkey v2（https://www.autohotkey.com）
+; 3) 以双击或右键 Run Script 启动
+; 4) 若某个程序进程名不同（不是 Spine.exe / Photoshop.exe / maya.exe），
+;    请在对应 #HotIf 的 WinActive(...) 中改成正确的 exe 名或窗口标题，例如:
+;       #HotIf WinActive("ahk_exe Spine.com") 或 #HotIf WinActive("Spine")
+; ===================================================================
