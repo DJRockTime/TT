@@ -182,3 +182,105 @@ Space:: {
 ;    请在对应 #HotIf 的 WinActive(...) 中改成正确的 exe 名或窗口标题，例如:
 ;       #HotIf WinActive("ahk_exe Spine.com") 或 #HotIf WinActive("Spine")
 ; ===================================================================
+
+
+
+#Requires AutoHotkey v2.0
+#HotIf WinActive("ahk_exe Spine.exe")
+
+IsTyping() {
+    ctrl := ControlGetFocus("A")
+    return RegExMatch(ctrl, "i)Edit|RichEdit|Text")
+}
+
+; ================================
+; Blender 风格旋转（增强版）
+; - 按 R 立即进入旋转工具
+; - 自动按下并保持鼠标左键（模拟 Blender 的挂起操作）
+; - 松开 R 不退出（和 Blender 相同）
+; - 切换 G 或 S 时自动结束旋转（自动 LButton up）
+; ================================
+
+; 激活旋转模式（R）
+R:: {
+    global rotating := true
+
+    if IsTyping()
+        return
+
+    ; Spine 工具切换：旋转工具 = C
+    Send("{c}")
+
+    Sleep(20)
+
+    ; 自动进入操作（按住左键模拟拖拽）
+    Send("{LButton down}")
+
+    return
+}
+
+; ================================
+; G: 移动 → 自动退出旋转挂起
+; ================================
+G:: {
+    global rotating
+    
+    if (rotating) {
+        Send("{LButton up}")   ; 释放旋转拖拽
+        rotating := false
+    }
+
+    Send("{v}") ; Spine Move
+    Send("{LButton down}") ; 自动挂起移动（与 Blender 行为一致）
+    return
+}
+
+; ================================
+; S: 缩放 → 自动退出旋转挂起
+; ================================
+S:: {
+    global rotating
+
+    if (rotating) {
+        Send("{LButton up}")
+        rotating := false
+    }
+
+    Send("{x}") ; Spine Scale
+    Send("{LButton down}")
+    return
+}
+
+; ================================
+; 左键确认后退出挂起模式
+; ================================
+LButton:: {
+    global rotating
+    if (rotating) {
+        rotating := false
+        Send("{LButton down}")
+        return
+    }
+    Send("{LButton down}")
+    return
+}
+
+LButton up:: {
+    Send("{LButton up}")
+    return
+}
+
+; ================================
+; Esc 取消当前操作（模拟 Blender）
+; ================================
+Esc:: {
+    global rotating
+    if rotating {
+        Send("{LButton up}")
+        rotating := false
+    }
+    Send("{Esc}")
+    return
+}
+
+#HotIf
