@@ -284,3 +284,106 @@ Esc:: {
 }
 
 #HotIf
+
+
+; ---------- Spine 专用：Reset + Tab 模式切换（AutoHotkey v2） ----------
+#HotIf WinActive("ahk_exe Spine.exe")
+
+; 全局模式索引（Tab 循环）
+global SpineModeIndex := 1
+global SpineModes := ["pose", "weight", "create"]
+
+; ----- Alt+G : Reset Location (X=0, Y=0) -----
+!g:: {
+    ; 进入移动工具（Spine = V）
+    Send("v")
+    Sleep(40)
+
+    ; 聚焦属性面板第一个数值输入（通常为 X）
+    ; 如果你发现 Tab 次数不对，请把 "{Tab 2}" 改为合适次数
+    Send("{Tab 2}")
+    Sleep(30)
+
+    Send("0")
+    Sleep(20)
+    Send("{Enter}")
+    Sleep(20)
+
+    ; 下一个是 Y（按一次 Tab）
+    Send("{Tab}")
+    Sleep(20)
+    Send("0")
+    Sleep(20)
+    Send("{Enter}")
+    Sleep(20)
+
+    return
+}
+
+; ----- Alt+S : Reset Scale (SX=100, SY=100) -----
+!s:: {
+    ; 进入缩放工具（Spine = X）
+    Send("x")
+    Sleep(40)
+
+    ; 聚焦 scale X（Tab 次数视你的面板而定）
+    Send("{Tab 2}")
+    Sleep(30)
+    Send("100")
+    Sleep(20)
+    Send("{Enter}")
+    Sleep(20)
+
+    ; scale Y
+    Send("{Tab}")
+    Sleep(20)
+    Send("100")
+    Sleep(20)
+    Send("{Enter}")
+    Sleep(20)
+
+    return
+}
+
+; ----- Alt+R : Reset Rotation (R=0) -----
+!r:: {
+    ; 进入旋转工具（Spine = C）
+    Send("c")
+    Sleep(40)
+
+    ; 聚焦 Rotation 输入框（Tab 次数可能需调整）
+    ; 默认尝试两次 Tab 定位到旋转输入
+    Send("{Tab 2}")
+    Sleep(30)
+
+    ; 重置为 0 度
+    Send("0")
+    Sleep(20)
+    Send("{Enter}")
+    Sleep(20)
+
+    return
+}
+
+; ----- Tab: 循环切换 Pose / Weight / Create -----
+Tab:: {
+    mode := SpineModes[SpineModeIndex]
+
+    if (mode = "pose") {
+        ; 假设你把 Pose 绑定到 Ctrl+1（如不同请改）
+        Send("^1")
+    } else if (mode = "weight") {
+        Send("^2")
+    } else if (mode = "create") {
+        Send("^3")
+    }
+
+    SpineModeIndex += 1
+    if SpineModeIndex > SpineModes.Length
+        SpineModeIndex := 1
+
+    return
+}
+
+#HotIf
+; -----------------------------------------------------------------------
